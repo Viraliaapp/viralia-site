@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viralia — AI That Fights For You</title>
+<meta name="description" content="ARIA is your AI-powered customer service advocate. Deploy her in any support chat and she handles the entire conversation for you — automatically.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070f;
+  --bg2: #0e0e1a;
+  --bg3: #13131f;
+  --violet: #7c3aed;
+  --violet-bright: #a78bfa;
+  --violet-glow: rgba(124,58,237,0.25);
+  --cyan: #22d3ee;
+  --white: #f0f0ff;
+  --muted: #8888aa;
+  --border: rgba(124,58,237,0.2);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Figtree', sans-serif;
+  font-weight: 400;
+  overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.4;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(7,7,15,0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  text-decoration: none;
+}
+
+.nav-logo span { color: var(--violet-bright); }
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--white); }
+
+.nav-cta {
+  background: var(--violet);
+  color: #fff !important;
+  padding: 10px 22px;
+  border-radius: 100px;
+  font-weight: 600 !important;
+  transition: background 0.2s, transform 0.2s !important;
+}
+
+.nav-cta:hover {
+  background: #6d28d9 !important;
+  transform: translateY(-1px);
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 20px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-glow {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(124,58,237,0.15) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-glow-2 {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 70%);
+  top: 20%;
+  right: 10%;
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.4);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--violet-bright);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--cyan);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.hero h1 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(3rem, 8vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: 28px;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--violet-bright), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--muted);
+  max-width: 560px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+  font-weight: 400;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--violet);
+  color: #fff;
+  text-decoration: none;
+  padding: 16px 32px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 0 40px rgba(124,58,237,0.4);
+}
+
+.btn-primary:hover {
+  background: #6d28d9;
+  transform: translateY(-2px);
+  box-shadow: 0 0 60px rgba(124,58,237,0.6);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 16px 24px;
+  border-radius: 100px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  color: var(--white);
+  border-color: rgba(124,58,237,0.5);
+}
+
+.hero-stats {
+  display: flex;
+  gap: 48px;
+  margin-top: 80px;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1;
+}
+
+.stat-num span { color: var(--violet-bright); }
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTION COMMONS ── */
+section {
+  padding: 100px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--violet-bright);
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.section-sub {
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  max-width: 540px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: 0;
+}
+
+/* ── HOW IT WORKS ── */
+.how-section {
+  background: var(--bg2);
+  max-width: 100%;
+  padding: 100px 20px;
+}
+
+.how-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.how-header {
+  text-align: center;
+  margin-bottom: 72px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.step {
+  background: var(--bg2);
+  padding: 48px 40px;
+  position: relative;
+}
+
+.step-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 5rem;
+  font-weight: 800;
+  color: rgba(124,58,237,0.12);
+  line-height: 1;
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  letter-spacing: -0.04em;
+}
+
+.step-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(124,58,237,0.15);
+  border: 1px solid rgba(124,58,237,0.3);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 24px;
+}
+
+.step h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.step p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* ── FEATURES ── */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 60px;
+}
+
+.feature-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.feature-card:hover {
+  border-color: rgba(124,58,237,0.5);
+  transform: translateY(-2px);
+}
+
+.feature-card.large {
+  grid-column: span 2;
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.feature-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.feature-tag {
+  display: inline-block;
+  background: rgba(34,211,238,0.1);
+  border: 1px solid rgba(34,211,238,0.2);
+  color: var(--cyan);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+
+/* ── STORES ── */
+.stores-section {
+  text-align: center;
+  background: var(--bg3);
+  max-width: 100%;
+  padding: 80px 20px;
+}
+
+.stores-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.stores-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 40px;
+}
+
+.stores-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.store-pill {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+
+.store-pill:hover {
+  color: var(--white);
+  border-color: rgba(124,58,237,0.4);
+}
+
+/* ── DOWNLOAD ── */
+.download-section {
+  text-align: center;
+  padding: 120px 20px;
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  background: linear-gradient(180deg, var(--bg) 0%, #0d0720 50%, var(--bg) 100%);
+}
+
+.download-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.download-inner {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.download-inner h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 24px;
+}
+
+.download-inner h2 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--violet-bright), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.download-inner p {
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+
+.play-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--white);
+  color: #111;
+  text-decoration: none;
+  padding: 16px 28px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.2s;
+  box-shadow: 0 0 60px rgba(167,139,250,0.3);
+}
+
+.play-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 80px rgba(167,139,250,0.5);
+}
+
+.play-badge svg {
+  width: 28px;
+  height: 28px;
+}
+
+.play-badge-text small {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── LEGAL SECTIONS ── */
+.legal-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 80px 20px;
+}
+
+.legal-section h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  color: var(--white);
+}
+
+.legal-section .updated {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 48px;
+}
+
+.legal-section h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--violet-bright);
+  margin: 36px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8rem;
+}
+
+.legal-section p, .legal-section li {
+  color: #9999bb;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.legal-section ul {
+  padding-left: 20px;
+}
+
+.legal-section li { margin-bottom: 6px; }
+
+.legal-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 48px;
+  width: fit-content;
+}
+
+.legal-tab {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--muted);
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-family: 'Figtree', sans-serif;
+}
+
+.legal-tab.active {
+  background: var(--violet);
+  color: white;
+}
+
+.legal-content { display: none; }
+.legal-content.active { display: block; }
+
+.highlight-box {
+  background: rgba(124,58,237,0.08);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 20px 0;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 60px 40px 40px;
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 48px;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.footer-brand .nav-logo {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 1.6rem;
+}
+
+.footer-brand p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  max-width: 260px;
+  line-height: 1.6;
+}
+
+.footer-links h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.footer-links ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a {
+  color: #7777aa;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--white); }
+
+.footer-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 16px 20px; }
+  .nav-links { display: none; }
+  .steps { grid-template-columns: 1fr; }
+  .features-grid { grid-template-columns: 1fr; }
+  .feature-card.large { grid-column: span 1; }
+  .hero-stats { gap: 28px; }
+  .footer-top { flex-direction: column; }
+  .legal-tabs { flex-direction: column; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Vira<span>lia</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#legal">Privacy</a></li>
+    <li><a href="#download" class="nav-cta">Download</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    AI Agent · Now on Android
+  </div>
+
+  <h1>Stop arguing.<br>Let <em>ARIA</em> fight<br>for you.</h1>
+
+  <p class="hero-sub">
+    ARIA is your AI customer service advocate. Deploy her in any support chat and she handles the entire conversation — reading agent replies, crafting responses, escalating when needed — all automatically.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#download" class="btn-primary">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.65.19.96.07l13.2-7.62-2.82-2.82-11.34 10.37zM.22 1.12C.08 1.4 0 1.73 0 2.1v19.8c0 .37.08.7.22.98l.1.1 11.1-11.1v-.26L.32 1.02l-.1.1zM20.56 9.8l-2.82-1.63-3.17 3.17 3.17 3.17 2.84-1.64c.81-.47.81-1.6-.02-2.07zM4.14.24L17.34 7.86l-2.82 2.82L3.18.31A1.04 1.04 0 014.14.24z"/></svg>
+      Get it on Google Play
+    </a>
+    <a href="#how" class="btn-secondary">See how it works →</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">20<span>+</span></div>
+      <div class="stat-label">Languages</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">90<span>min</span></div>
+      <div class="stat-label">Background sessions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">50<span>+</span></div>
+      <div class="stat-label">Supported stores</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<div class="how-section" id="how">
+  <div class="how-inner">
+    <div class="how-header">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">Three steps.<br>Zero stress.</h2>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-icon">🎯</div>
+        <h3>Describe your issue</h3>
+        <p>Tell ARIA what happened — a late package, a wrong charge, a broken product. Give her the context and your desired outcome.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🚀</div>
+        <div class="step-num">02</div>
+        <h3>Deploy ARIA</h3>
+        <p>Open the store's support chat in Viralia's browser. Tap Deploy. ARIA sends the opening message and takes over from there.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">✅</div>
+        <div class="step-num">03</div>
+        <h3>Get your resolution</h3>
+        <p>ARIA reads every agent reply, responds with the right tone and strategy, escalates if needed — and notifies you when it's done.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">Features</div>
+  <h2 class="section-title">Built to win.</h2>
+  <p class="section-sub">Every feature designed around one goal — getting you the outcome you deserve.</p>
+
+  <div class="features-grid">
+    <div class="feature-card large">
+      <div class="feature-tag">Deep Mode</div>
+      <div class="feature-icon">🌙</div>
+      <h3>90-Minute Background Sessions</h3>
+      <p>Lock your phone. ARIA keeps running. Deep Mode uses a foreground service to stay alive through the entire support interaction — even if you switch apps or the screen turns off. You get a notification when it's resolved.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🎭</div>
+      <h3>Three Tones</h3>
+      <p>Diplomatic, Professional, or Assertive. Pick the right energy for each situation.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📸</div>
+      <h3>Evidence Attachments</h3>
+      <p>Send screenshots directly to ARIA. She'll reference your evidence in the negotiation.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🎙️</div>
+      <h3>Voice Input</h3>
+      <p>Speak your issue instead of typing. Groq Whisper transcribes it instantly.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Outcome Confidence Score</h3>
+      <p>ARIA scores each session 0–100 on likelihood of resolution in real time.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3>Inline Notification Replies</h3>
+      <p>Message ARIA from your notification shade without opening the app.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🌍</div>
+      <h3>20 Languages</h3>
+      <p>Full localization plus multilingual AI prompts. ARIA speaks your language.</p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3>PDF Export & Session History</h3>
+      <p>Every session saved. Export full transcripts as PDFs for your records.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- STORES -->
+<div class="stores-section">
+  <div class="stores-inner">
+    <p class="stores-label">Works with your favorite stores & services</p>
+    <div class="stores-row">
+      <span class="store-pill">Amazon</span>
+      <span class="store-pill">Walmart</span>
+      <span class="store-pill">Target</span>
+      <span class="store-pill">Best Buy</span>
+      <span class="store-pill">eBay</span>
+      <span class="store-pill">Wayfair</span>
+      <span class="store-pill">Costco</span>
+      <span class="store-pill">Home Depot</span>
+      <span class="store-pill">AT&T</span>
+      <span class="store-pill">Verizon</span>
+      <span class="store-pill">United Airlines</span>
+      <span class="store-pill">DHL</span>
+      <span class="store-pill">Chewy</span>
+      <span class="store-pill">Etsy</span>
+      <span class="store-pill">+ any live chat</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- DOWNLOAD -->
+<div class="download-section" id="download">
+  <div class="download-glow"></div>
+  <div class="download-inner">
+    <div class="section-label" style="text-align:center;">Available now</div>
+    <h2>Your advocate is<br><em>ready to deploy.</em></h2>
+    <p>Free to download. No credit card required to start.<br>Upgrade to Pro for unlimited Deep Mode sessions.</p>
+
+    <a href="https://play.google.com/store/apps/details?id=com.viralia.app" class="play-badge">
+      <svg viewBox="0 0 24 24" fill="#111" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.18 23.76c.3.17.65.19.96.07l13.2-7.62-2.82-2.82-11.34 10.37zM.22 1.12C.08 1.4 0 1.73 0 2.1v19.8c0 .37.08.7.22.98l.1.1 11.1-11.1v-.26L.32 1.02l-.1.1zM20.56 9.8l-2.82-1.63-3.17 3.17 3.17 3.17 2.84-1.64c.81-.47.81-1.6-.02-2.07zM4.14.24L17.34 7.86l-2.82 2.82L3.18.31A1.04 1.04 0 014.14.24z"/>
+      </svg>
+      <div class="play-badge-text">
+        <small>Get it on</small>
+        Google Play
+      </div>
+    </a>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- LEGAL -->
+<div class="legal-section" id="legal">
+  <div class="legal-tabs">
+    <button class="legal-tab active" onclick="showTab('privacy')">Privacy Policy</button>
+    <button class="legal-tab" onclick="showTab('terms')">Terms & Conditions</button>
+  </div>
+
+  <!-- PRIVACY POLICY -->
+  <div class="legal-content active" id="tab-privacy">
+    <h2>Privacy Policy</h2>
+    <p class="updated">Last updated: February 2026</p>
+    <p>Your privacy matters. This policy explains what data Viralia collects, how it is used, and your rights.</p>
+
+    <h3>1. Information We Collect</h3>
+    <p><strong style="color:var(--white)">Account Information:</strong> Your email address, collected when you sign in via Firebase Authentication.</p>
+    <p><strong style="color:var(--white)">Conversation Content:</strong> The text of customer support conversations conducted through Viralia. This content is transmitted to Groq, Inc.'s API servers for AI processing in real time during active sessions. Conversation history is stored locally on your device after sessions end.</p>
+    <p><strong style="color:var(--white)">Profile Data (Optional):</strong> Name, email address, billing address, and last 4 digits of a payment card — only if you choose to enter them in My Profile. This data is stored exclusively on your device using AES-256-GCM encryption backed by the Android Keystore. It is never transmitted to Viralia's servers.</p>
+    <p><strong style="color:var(--white)">App Usage Data:</strong> Basic crash reports and anonymized usage analytics to improve the product (via Firebase Crashlytics/Analytics).</p>
+    <p><strong style="color:var(--white)">Device Information:</strong> Android OS version, app version, and device model — used for bug diagnosis only.</p>
+
+    <h3>2. How We Use Your Information</h3>
+    <ul>
+      <li>To provide the core AI writing assistance service (requires Groq API).</li>
+      <li>To authenticate your account securely via Firebase.</li>
+      <li>To store your session history locally on your device for your reference.</li>
+      <li>To improve our AI prompts and service quality using aggregated, anonymized usage data.</li>
+      <li>To send push notifications about your active sessions (only with your permission).</li>
+    </ul>
+
+    <h3>3. Data Sharing & How Viralia Makes Money</h3>
+    <p><strong style="color:var(--white)">Groq, Inc. (AI API provider):</strong> Conversation content is sent to Groq's servers in real time for AI response generation. Groq processes this data under their own Privacy Policy (groq.com/privacy).</p>
+    <p><strong style="color:var(--white)">Google LLC / Firebase:</strong> Your email address is stored with Firebase Authentication. Firebase Analytics and Crashlytics may collect anonymized usage and crash data.</p>
+
+    <div class="highlight-box">
+      <p><strong style="color:var(--white)">Aggregate Market Intelligence (ANONYMIZED — NO PERSONAL DATA):</strong></p>
+      <p>Viralia's business model includes licensing fully anonymized, aggregated, non-personally-identifiable market insights to third parties.</p>
+      <p><strong style="color:var(--white)">What we may collect and license:</strong></p>
+      <ul>
+        <li>Aggregated statistics about which categories of consumer issues are most common</li>
+        <li>Industry-level resolution rate benchmarks</li>
+        <li>Anonymized negotiation effectiveness patterns by company category</li>
+        <li>Aggregate session metadata: duration, message count, resolution outcome</li>
+      </ul>
+      <p style="margin-top:12px"><strong style="color:var(--white)">What we NEVER include:</strong></p>
+      <ul>
+        <li>Your name, email address, or any identifier</li>
+        <li>The actual text of any conversation</li>
+        <li>Your account numbers, card details, or profile data</li>
+        <li>Any data that could be linked back to you as an individual</li>
+        <li>IP addresses, device IDs, or location</li>
+      </ul>
+    </div>
+
+    <p><strong style="color:var(--white)">No Other Sharing:</strong> We do NOT sell your personal data. We do NOT sell conversation transcripts. We do NOT share your identity with advertisers or data brokers.</p>
+
+    <h3>4. Data We Do Not Share</h3>
+    <ul>
+      <li>We do not share your conversations (actual text) with any third party.</li>
+      <li>We do not sell personal data to any third party.</li>
+      <li>We do not use your data to serve targeted advertisements.</li>
+      <li>We do not share your data with the retailers or businesses you contact through Viralia.</li>
+    </ul>
+
+    <h3>5. Data Storage & Security</h3>
+    <p>Session history and profile data are stored locally on your device, encrypted using AES-256-GCM via Android's EncryptedSharedPreferences backed by the Android Keystore. This data is not uploaded to Viralia's servers. We implement industry-standard security practices for data in transit (TLS/HTTPS for all API calls).</p>
+
+    <h3>6. Data Retention</h3>
+    <ul>
+      <li>Local device data (session history, profile) is retained until you delete it or uninstall the app.</li>
+      <li>Firebase Authentication data is retained until you delete your account.</li>
+      <li>To request deletion: <a href="mailto:privacy@viralia.app" style="color:var(--violet-bright)">privacy@viralia.app</a></li>
+    </ul>
+
+    <h3>7. Your Rights</h3>
+    <p>Depending on your jurisdiction, you may have the right to access, correct, delete, or port your personal data, and to withdraw consent. Contact: <a href="mailto:privacy@viralia.app" style="color:var(--violet-bright)">privacy@viralia.app</a></p>
+
+    <h3>8. California Residents — CCPA/CPRA</h3>
+    <p>We do not sell personal information. California residents may submit rights requests to: <a href="mailto:privacy@viralia.app" style="color:var(--violet-bright)">privacy@viralia.app</a></p>
+
+    <h3>9. European Users — GDPR</h3>
+    <p>If you are in the EEA, UK, or Switzerland, your data is processed under GDPR. Legal basis: consent and legitimate interest. You may withdraw consent at any time by deleting your account. GDPR requests: <a href="mailto:privacy@viralia.app" style="color:var(--violet-bright)">privacy@viralia.app</a></p>
+
+    <h3>10. Children's Privacy</h3>
+    <p>Viralia is not directed to children under the age of 13 (or 16 in the EEA). We do not knowingly collect personal information from children.</p>
+
+    <h3>11. Push Notifications</h3>
+    <p>You may disable notifications at any time in your device's system Settings or within the Viralia app Settings.</p>
+
+    <h3>12. Changes to This Policy</h3>
+    <p>We may update this Privacy Policy from time to time. We will notify you of significant changes via an in-app notice.</p>
+
+    <h3>13. Contact</h3>
+    <p>Email: <a href="mailto:privacy@viralia.app" style="color:var(--violet-bright)">privacy@viralia.app</a><br>
+    Support: <a href="mailto:support@viralia.app" style="color:var(--violet-bright)">support@viralia.app</a></p>
+  </div>
+
+  <!-- TERMS -->
+  <div class="legal-content" id="tab-terms">
+    <h2>Terms & Conditions</h2>
+    <p class="updated">Last updated: February 2026</p>
+    <p>Please read these terms carefully before using Viralia.</p>
+
+    <h3>1. Acceptance of Terms</h3>
+    <p>By downloading, installing, or using Viralia, you agree to be bound by these Terms and Conditions. If you do not agree, do not use this app.</p>
+
+    <h3>2. What Viralia Is</h3>
+    <p>Viralia is an AI-powered consumer communication assistant. ARIA is designed to help you communicate with customer support agents of third-party businesses autonomously — once deployed by you, it reads agent messages and sends replies on your behalf without requiring your approval for each individual message. You retain the ability to take manual control at any time.</p>
+
+    <h3>3. What Viralia Is Not</h3>
+    <ul>
+      <li>NOT a legal service, financial advisory service, or debt collection service.</li>
+      <li>Does NOT guarantee any refund, resolution, credit, or other outcome.</li>
+      <li>NOT affiliated with, endorsed by, or sponsored by any retailer listed in the app.</li>
+      <li>ARIA is NOT a licensed attorney, financial advisor, or consumer advocate.</li>
+    </ul>
+
+    <h3>4. AI Disclosure & Autonomous Operation</h3>
+    <p>ARIA is an artificial intelligence. Messages are generated by a large language model (LLaMA-3 via Groq API) and may contain errors. You are the account holder and the legal party in any customer support interaction. ARIA acts as your writing tool, not as an independent agent with legal standing.</p>
+
+    <h3>5. Your Responsibilities</h3>
+    <ul>
+      <li>You will only use Viralia for lawful purposes and honest consumer disputes.</li>
+      <li>You will not make false, fraudulent, or exaggerated claims.</li>
+      <li>You will not use Viralia to harass or demean customer service representatives.</li>
+      <li>You are solely responsible for all outcomes arising from your use of Viralia.</li>
+      <li>You will comply with the Terms of Service of any platform you interact with using Viralia.</li>
+    </ul>
+
+    <h3>6. Legal Compliance</h3>
+    <p>Laws vary by jurisdiction. You are solely responsible for ensuring your use of Viralia complies with all applicable laws. Some businesses may prohibit the use of automated tools in their Terms of Service.</p>
+
+    <h3>7. How Viralia Makes Money</h3>
+    <div class="highlight-box">
+      <p><strong style="color:var(--white)">Subscription Fees:</strong> Our primary revenue model.</p>
+      <p><strong style="color:var(--white)">Aggregate Market Intelligence (Anonymized):</strong> We may license fully anonymized, non-personally-identifiable aggregate data to market research firms. This NEVER includes your name, email, conversation transcripts, or any identifying information.</p>
+      <p><strong style="color:var(--white)">What we do NOT do:</strong> We do not sell your personal data, conversation transcripts, or identity to any third party.</p>
+    </div>
+
+    <h3>8. Limitation of Liability</h3>
+    <p>Viralia LLC provides this app "AS IS" without warranty of any kind. We are not liable for any direct, indirect, incidental, or consequential damages. Our total aggregate liability shall not exceed the greater of (a) total fees you paid us in the preceding 12 months, or (b) $10 USD.</p>
+
+    <h3>9. Governing Law</h3>
+    <p>These Terms are governed by the laws of the State of Delaware, United States. Disputes resolved through binding individual arbitration, not class action.</p>
+
+    <h3>10. Contact</h3>
+    <p>For legal or support inquiries: <a href="mailto:support@viralia.app" style="color:var(--violet-bright)">support@viralia.app</a></p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo">Vira<span>lia</span></a>
+        <p>AI-powered customer service advocacy. Let ARIA fight your battles while you get on with your life.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#download">Download</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#legal" onclick="showTab('privacy')">Privacy Policy</a></li>
+          <li><a href="#legal" onclick="showTab('terms')">Terms & Conditions</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:support@viralia.app">support@viralia.app</a></li>
+          <li><a href="mailto:privacy@viralia.app">privacy@viralia.app</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Viralia. All rights reserved.</span>
+      <span>Not affiliated with any retailer or platform listed in the app.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function showTab(tab) {
+  document.querySelectorAll('.legal-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && tab === 'privacy') || (i === 1 && tab === 'terms'));
+  });
+  document.getElementById('tab-privacy').classList.toggle('active', tab === 'privacy');
+  document.getElementById('tab-terms').classList.toggle('active', tab === 'terms');
+  document.getElementById('legal').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.step, .feature-card, .store-pill').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
